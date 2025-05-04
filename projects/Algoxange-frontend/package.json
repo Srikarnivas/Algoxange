@@ -1,9 +1,9 @@
 {
-  "name": "Algoxange-frontend",
+  "name": "nftcreate",
   "version": "0.1.0",
   "author": {
-    "name": "Srikarnivas",
-    "email": "srikarnivas.24@gmail.com"
+    "name": "rushikesh2k04",
+    "email": "rushikesh9.2004@gmail.com"
   },
   "private": true,
   "type": "module",
@@ -30,6 +30,7 @@
     "@txnlab/use-wallet": "^4.0.0",
     "@txnlab/use-wallet-react": "^4.0.0",
     "algosdk": "^3.0.0",
+    "axios": "^1.9.0",
     "notistack": "^3.0.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",

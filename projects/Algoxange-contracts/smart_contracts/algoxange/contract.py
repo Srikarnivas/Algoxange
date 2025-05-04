@@ -6,34 +6,16 @@ class Algoxange(ARC4Contract):
     assetid: UInt64
     unitaryprice: UInt64
 
-    @abimethod()
-    def create_nft( self, asset_name: String, unit_name: String, url: String ) -> UInt64:
-        
-        itxn_result = itxn.AssetConfig(
-            total= 1,
-            decimals= 0,
-            unit_name=unit_name,
-            asset_name=asset_name,
-            url=url,
-            manager=Global.current_application_address,
-            reserve=Global.current_application_address,
-            freeze=Global.current_application_address,
-            clawback=Global.current_application_address,
-        ).submit()
-
-        return itxn_result.created_asset.id
-    #create the app
     @abimethod(allow_actions=["NoOp"], create="require")
     def create_application(self, asset_id: Asset, unitary_price: UInt64) -> None:
         self.assetid = asset_id.id
         self.unitaryprice = unitary_price
+    
     @abimethod()
     def update_asset_id(self, asset_id: Asset) -> None:
         assert Txn.sender == Global.creator_address
-
         self.assetid = asset_id.id
     
-
     #update the listing price
     @abimethod()
     def set_price(self, unitary_price: UInt64) -> None:

@@ -1,4 +1,4 @@
-# Algoxange-frontend
+# nftcreate
 
 This starter React project has been generated using AlgoKit. See below for default getting started instructions.
 
