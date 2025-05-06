@@ -16,13 +16,12 @@ class Algoxange(ARC4Contract):
         assert Txn.sender == Global.creator_address
         self.assetid = asset_id.id
     
-    #update the listing price
+
     @abimethod()
     def set_price(self, unitary_price: UInt64) -> None:
         assert Txn.sender == Global.creator_address
         self.unitaryprice = unitary_price
 
-    # opt in to the asset that will be sold
     @abimethod()
     def opt_in_to_asset(self, mbrpay: gtxn.PaymentTransaction) -> None:
         assert Txn.sender == Global.creator_address
@@ -48,7 +47,7 @@ class Algoxange(ARC4Contract):
             return UInt64(3)
         return UInt64(0)  # All good
 
-    # buy the asset
+
     @abimethod()
     def buy(self, buyerTxn: gtxn.PaymentTransaction) -> None:
 
@@ -56,7 +55,7 @@ class Algoxange(ARC4Contract):
         assert(buyerTxn.receiver == Global.current_application_address )
         assert(buyerTxn.amount == self.unitaryprice )
 
-    # Perform asset transfer
+
         itxn.AssetTransfer(
             xfer_asset=self.assetid,
             asset_receiver=Txn.sender,
@@ -68,23 +67,18 @@ class Algoxange(ARC4Contract):
 
         assert Txn.sender == Global.creator_address
 
-        # Send all the unsold assets to the creator
+
         itxn.AssetTransfer(
             xfer_asset=self.assetid,
             asset_receiver=Global.creator_address,
-            # The amount is 0, but the asset_close_to field is set
-            # This means that ALL assets are being sent to the asset_close_to address
             asset_amount=0,
-            # Close the asset to unlock the 0.1 ALGO that was locked in opt_in_to_asset
             asset_close_to=Global.creator_address,
             fee=1_000,
         ).submit()
 
-        # Send the remaining balance to the creator
         itxn.Payment(
             receiver=Global.creator_address,
             amount=0,
-            # Close the account to get back ALL the ALGO in the account
             close_remainder_to=Global.creator_address,
             fee=1_000,
         ).submit()
