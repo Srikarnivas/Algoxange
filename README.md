@@ -1,45 +1,134 @@
-# Algoxange
 
-This starter full stack project has been generated using AlgoKit. See below for default getting started instructions.
+# 📘 AlgoRack – A Book-Selling NFT Marketplace on Algorand
 
-## Setup
+AlgoRack is a decentralized NFT marketplace where authors can mint and sell digital books (eBooks, articles, research papers) as Non-Fungible Tokens (NFTs) on the Algorand blockchain. It leverages smart contracts written in `algopy` to securely manage book listings and purchases, with NFT creation handled on the frontend using `algosdk`.
 
-### Initial setup
-1. Clone this repository to your local machine.
-2. Ensure [Docker](https://www.docker.com/) is installed and operational. Then, install `AlgoKit` following this [guide](https://github.com/algorandfoundation/algokit-cli#install).
-3. Run `algokit project bootstrap all` in the project directory. This command sets up your environment by installing necessary dependencies, setting up a Python virtual environment, and preparing your `.env` file.
-4. In the case of a smart contract project, execute `algokit generate env-file -a target_network localnet` from the `Algoxange-contracts` directory to create a `.env.localnet` file with default configuration for `localnet`.
-5. To build your project, execute `algokit project run build`. This compiles your project and prepares it for running.
-6. For project-specific instructions, refer to the READMEs of the child projects:
-   - Smart Contracts: [Algoxange-contracts](projects/Algoxange-contracts/README.md)
-   - Frontend Application: [Algoxange-frontend](projects/Algoxange-frontend/README.md)
+---
 
-> This project is structured as a monorepo, refer to the [documentation](https://github.com/algorandfoundation/algokit-cli/blob/main/docs/features/project/run.md) to learn more about custom command orchestration via `algokit project run`.
+## 🚀 Features
 
-### Subsequently
+- ✅ **NFT Creation (Frontend)**
+  - Authors mint NFTs for their books using the frontend.
+  - Each book is represented as an ASA (Algorand Standard Asset) with:
+    - Total supply of 1 (NFT)
+    - Asset name, unit name, metadata link (e.g., IPFS)
+    - Zero decimals (indivisible)
 
-1. If you update to the latest source code and there are new dependencies, you will need to run `algokit project bootstrap all` again.
-2. Follow step 3 above.
+- ✅ **List Book for Sale**
+  - After creating the NFT, the author lists it for sale by deploying the smart contract using `create_application(asset_id, price)`.
 
-## Tools
+- ✅ **Opt-In to Asset**
+  - The smart contract can opt-in to hold the NFT before sales begin.
 
-This project makes use of Python and React to build Algorand smart contracts and to provide a base project configuration to develop frontends for your Algorand dApps and interactions with smart contracts. The following tools are in use:
+- ✅ **Buy Book (NFT)**
+  - Buyers pay in ALGO and receive the NFT directly via the `buy()` function in the smart contract.
 
-- Algorand, AlgoKit, and AlgoKit Utils
-- Python dependencies including Poetry, Black, Ruff or Flake8, mypy, pytest, and pip-audit
-- React and related dependencies including AlgoKit Utils, Tailwind CSS, daisyUI, use-wallet, npm, jest, playwright, Prettier, ESLint, and Github Actions workflows for build validation
+- ✅ **Close Sale**
+  - Authors can delete the contract, reclaim unsold NFTs and earned ALGO via `delete_application()`.
 
-### VS Code
+---
 
-It has also been configured to have a productive dev experience out of the box in [VS Code](https://code.visualstudio.com/), see the [backend .vscode](./backend/.vscode) and [frontend .vscode](./frontend/.vscode) folders for more details.
+## 🔗 Workflow
 
-## Integrating with smart contracts and application clients
+1. **NFT Creation (Frontend)**  
+   The author uploads a book and metadata. The frontend uses `algosdk` to call a `createNFT()` function that mints an ASA with a total supply of 1.
 
-Refer to the [Algoxange-contracts](projects/Algoxange-contracts/README.md) folder for overview of working with smart contracts, [projects/Algoxange-frontend](projects/Algoxange-frontend/README.md) for overview of the React project and the [projects/Algoxange-frontend/contracts](projects/Algoxange-frontend/src/contracts/README.md) folder for README on adding new smart contracts from backend as application clients on your frontend. The templates provided in these folders will help you get started.
-When you compile and generate smart contract artifacts, your frontend component will automatically generate typescript application clients from smart contract artifacts and move them to `frontend/src/contracts` folder, see [`generate:app-clients` in package.json](projects/Algoxange-frontend/package.json). Afterwards, you are free to import and use them in your frontend application.
+2. **Smart Contract Deployment**  
+   The NFT’s asset ID is passed to the smart contract’s `create_application(asset_id, unitary_price)` method.
 
-The frontend starter also provides an example of interactions with your AlgoxangeClient in [`AppCalls.tsx`](projects/Algoxange-frontend/src/components/AppCalls.tsx) component by default.
+3. **Opt-In to the Asset**  
+   The contract opts in to hold and sell the book NFT using `opt_in_to_asset()`.
 
-## Next Steps
+4. **Purchase**  
+   Buyers interact with the `buy()` method, pay the specified amount in ALGO, and receive the NFT.
 
-You can take this project and customize it to build your own decentralized applications on Algorand. Make sure to understand how to use AlgoKit and how to write smart contracts for Algorand before you start.
+5. **Close & Reclaim**  
+   When the sale is over, the author can close the contract with `delete_application()` to recover all remaining assets.
+
+---
+
+## 💻 Technologies Used
+
+| Layer          | Technology                         |
+|----------------|------------------------------------|
+| Blockchain     | [Algorand](https://www.algorand.com/) |
+| Smart Contract | [`algopy`](https://github.com/algorandfoundation/algopy) |
+| ABI Interface  | ARC4                               |
+| NFT Minting    | [`algosdk`](https://github.com/algorand/js-algorand-sdk) (frontend) |
+| Wallets        | MyAlgo Wallet / AlgoSigner         |
+| Storage        | IPFS / Pinata (for book files)     |
+
+---
+
+## 📂 Project Structure
+
+```
+/contracts
+  └── DigitalMarket.py         # ARC4 smart contract code
+/frontend
+  └── createNFT.js             # Function to mint ASA (NFT)
+  └── App.js                   # UI for uploading books and interacting with the contract
+```
+
+---
+
+## 🧠 Smart Contract Functions
+
+| Function | Description |
+|---------|-------------|
+| `create_application(asset_id, unitary_price)` | Initialize the marketplace app for a book NFT |
+| `set_price(new_price)` | Update the unit price |
+| `opt_in_to_asset()` | Smart contract opts in to receive the NFT |
+| `buy(payment_txn, quantity)` | Buyer sends ALGO and receives the book NFT |
+| `delete_application()` | Author deletes the contract and reclaims funds and unsold NFTs |
+
+---
+
+## 🛠 Prerequisites
+
+- Python + Algopy installed for contract deployment
+- Node.js + algosdk for frontend
+- Testnet ALGO from [Algorand Faucet](https://bank.testnet.algorand.network/)
+- Wallet setup (MyAlgo, AlgoSigner, or PeraWallet)
+
+---
+
+## 📦 Installation & Setup
+
+```bash
+# Install dependencies for frontend
+cd frontend
+npm install
+
+# Install Algopy for contract
+pip install algopy
+```
+
+---
+
+## 📌 Future Improvements
+
+- User dashboards for buyers and sellers
+- Search and filter by genre or price
+- Royalty support for secondary sales
+- Add metadata standards (ARC3, ARC69)
+- Secure file delivery post-purchase
+
+---
+
+## 📜 License
+
+This project is open-source and available under the MIT License.
+
+---
+
+## ✨ Authors
+
+- **Srikarnivas** – Full-stack Developer, AlgoRack Creator  
+- Connect: [srikarnivas.24@gmail.com](mailto:srikarnivas.24@gmail.com)
+
+---
+
+## 💡 Inspiration
+
+This project combines the speed of Algorand with the rising demand for digital collectibles and eBooks, enabling authors to earn fairly and transparently through decentralized distribution.
