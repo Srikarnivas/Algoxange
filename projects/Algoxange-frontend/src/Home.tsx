@@ -37,7 +37,7 @@ const Home: React.FC = () => {
     <div className="home-container">
       <div className="form-card">
         <h1>Welcome to <span className="bold">AlgoKit 🙂</span></h1>
-        <p className="subtitle">Sell your asset at your fingertips</p>
+        <p className="subtitle">Create the NFT ast your finger tips!!!</p>
 
         <button className="wallet-btn" onClick={toggleWalletModal}>
           Wallet Connection
